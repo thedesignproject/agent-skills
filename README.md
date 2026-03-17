@@ -11,6 +11,7 @@ Practical guides, skills, and references for getting the most out of AI-powered 
 | Skill | Description |
 |-------|-------------|
 | [create-prd](skills/create-prd/) | Generate structured PRDs from feature request transcripts or descriptions. Researches your codebase for accurate technical scoping and optionally creates Linear projects and issues. |
+| [presentation](skills/presentation/) | Create polished single-file HTML/CSS/JS slide deck presentations with animations, keyboard/click/swipe navigation, and progressive bullet reveal. |
 
 ## Contributing
 

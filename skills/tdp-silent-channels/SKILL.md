@@ -1,6 +1,6 @@
 ---
 name: tdp-silent-channels
-description: Enforce two TDP comms SOPs in one pass. (1) Shared customer channels #tdp-* must have a team message on each Mon/Thu (run Tue → verify Mon, run Fri → verify Thu). (2) Internal channels #____internal-* must receive an Associate daily status update every weekday — flag any expected weekday since the last run that had no human message. After detection, drafts a concise per-customer cadence report and (with explicit EA confirmation) posts it as "TDP Police" into each #____internal-* channel — never into customer-facing channels. Also verifies the skill's assumptions remain aligned with the TDP-handbook SOPs and surfaces drift.
+description: Enforce two TDP comms SOPs in one pass. (1) Shared customer channels #tdp-* must have a team message on each Mon/Thu (run Tue → verify Mon, run Fri → verify Thu). (2) Internal channels #____internal-* must receive an Associate daily status update every weekday — flag any expected weekday since the last run that had no human message. After detection, drafts a concise per-customer cadence report and (with explicit EA confirmation) posts it as "TDP Police" into each #____internal-* channel — never into customer-facing channels — plus a single aggregate recap of all per-channel messages to #team-operations. Also verifies the skill's assumptions remain aligned with the TDP-handbook SOPs and surfaces drift.
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep
 ---
@@ -20,18 +20,20 @@ This skill's behavior depends on these facts being true in the handbook. Step 0 
 
 ## Step 0 — Verify SOP alignment with the handbook
 
-The handbook is expected at `/Users/aalter/coding/TDP-handbook`. If that directory does not exist, **stop and ask the user for the correct path** before continuing.
+Resolve the handbook path from `$TDP_HANDBOOK_PATH` (override), then `$HOME/coding/TDP-handbook` (default). If neither exists, **stop and ask the user for the correct path** before continuing.
 
-1. Check that the handbook repo is up to date with origin:
+1. Resolve the path and check that the handbook repo is up to date with origin:
 
    ```bash
-   git -C /Users/aalter/coding/TDP-handbook fetch origin main --quiet && \
-   git -C /Users/aalter/coding/TDP-handbook rev-list --left-right --count HEAD...origin/main
+   HANDBOOK_DIR="${TDP_HANDBOOK_PATH:-$HOME/coding/TDP-handbook}"
+   [ -d "$HANDBOOK_DIR" ] || { echo "Handbook not found at $HANDBOOK_DIR — set TDP_HANDBOOK_PATH or ask user."; exit 1; }
+   git -C "$HANDBOOK_DIR" fetch origin main --quiet && \
+   git -C "$HANDBOOK_DIR" rev-list --left-right --count HEAD...origin/main
    ```
 
    If the right-hand count is non-zero, warn the user that the local handbook is behind `origin/main` and may not reflect the latest SOPs. Continue anyway.
 
-2. Read the following SOP files in full:
+2. Read the following SOP files in full (paths relative to `$HANDBOOK_DIR`):
    - `content/docs/sop/process/communication-standards.mdx`
    - `content/docs/sop/process/meeting-cadence.mdx`
    - `content/docs/sop/playbooks/daily-status.mdx`
@@ -50,24 +52,28 @@ The handbook is expected at `/Users/aalter/coding/TDP-handbook`. If that directo
 slackdump workspace select thedesignprojecthq
 ```
 
-## Step 2 — Get active customer channel IDs (shared + internal)
+## Step 2 — Get active customer channel IDs (shared + internal) + team-ops
 
 ```bash
-slackdump list channels 2>&1 | grep -E "(^|\s)(tdp-|____internal-)" | grep -v "(archived)"
+slackdump list channels 2>&1 | grep -E "(^|\s)(tdp-|____internal-|team-operations$)" | grep -v "(archived)"
 ```
 
 Extract each row's channel ID **and** name. Classify each:
 - **Shared** — name starts with `tdp-` (customer-facing; SOP-critical)
 - **Internal** — name starts with `____internal-` (team-only; daily SOP)
+- **Team-ops** — the single `team-operations` channel (aggregate report target)
 
 Save the mapping to `/tmp/tdp-silent-dump/channel_map.json` in this shape so later steps can both classify messages and post to the right channel ID:
 
 ```json
 {
   "tdp-acme":          {"kind": "shared",   "id": "C0ABC1234"},
-  "____internal-acme": {"kind": "internal", "id": "C0ABC5678"}
+  "____internal-acme": {"kind": "internal", "id": "C0ABC5678"},
+  "team-operations":   {"kind": "team-ops", "id": "C0ABC9999"}
 }
 ```
+
+If `team-operations` is not found, **stop and ask the user** — the aggregate report in Step 8 has nowhere to go.
 
 ## Step 3 — Compute the dump window
 
@@ -83,9 +89,11 @@ rm -rf /tmp/tdp-silent-dump && mkdir -p /tmp/tdp-silent-dump
 slackdump dump -files=false -time-from <7-days-ago> -o /tmp/tdp-silent-dump/channels.zip <all channel IDs>
 ```
 
-## Step 5 — Detect cadence misses and build per-customer reports
+## Step 5 — Detect cadence misses and build per-customer + aggregate reports
 
-This script reads the dump, identifies SOP violations, prints the EA-facing summary, and also writes `/tmp/tdp-silent-dump/reports.json` — one draft Slack message per customer for Step 7 to post.
+This script reads the dump, identifies SOP violations, prints the EA-facing summary, and writes:
+- `/tmp/tdp-silent-dump/reports.json` — one draft Slack message per customer for Step 8 to post into each `#____internal-*`.
+- `/tmp/tdp-silent-dump/aggregate_report.json` — a single aggregate summary for `#team-operations` that recaps every per-channel message sent.
 
 ```bash
 python3 - <<'EOF'
@@ -95,6 +103,7 @@ from datetime import datetime, timezone, timedelta
 DUMP_PATH = "/tmp/tdp-silent-dump/channels.zip"
 MAP_PATH = "/tmp/tdp-silent-dump/channel_map.json"
 REPORTS_PATH = "/tmp/tdp-silent-dump/reports.json"
+AGGREGATE_PATH = "/tmp/tdp-silent-dump/aggregate_report.json"
 
 with open(MAP_PATH) as fh:
     channel_map = json.load(fh)
@@ -300,6 +309,56 @@ reports.sort(key=lambda r: r["customer"])
 with open(REPORTS_PATH, "w") as fh:
     json.dump(reports, fh, indent=2)
 print(f"\nDraft reports written: {len(reports)} — see {REPORTS_PATH}")
+
+# ---- Aggregate report for #team-operations ----
+team_ops = next(
+    ((name, meta["id"]) for name, meta in channel_map.items() if meta.get("kind") == "team-ops"),
+    None,
+)
+
+green = [r for r in reports if r["shared_hit_slot"] and not r["internal_missed_weekdays"]]
+gaps  = [r for r in reports if not (r["shared_hit_slot"] and not r["internal_missed_weekdays"])]
+
+agg_lines = [f"*Weekly SOP cadence audit — {run_day_label}*"]
+if slot_label and slot_date:
+    agg_lines.append(f"Checked {len(reports)} internal channel(s) against: {slot_label} + daily status on {expected_str}.")
+else:
+    agg_lines.append(f"Checked {len(reports)} internal channel(s) against: daily status on {expected_str}.")
+agg_lines.append(f"• :white_check_mark: {len(green)} green  •  :warning: {len(gaps)} with gaps")
+
+if gaps:
+    agg_lines.append("")
+    agg_lines.append("*Gap breakdown:*")
+    for r in gaps:
+        bits = []
+        if r["shared_channel_name"] and not r["shared_hit_slot"] and slot_day_name:
+            bits.append(f"no {slot_day_name} customer check-in in `#{r['shared_channel_name']}`")
+        if r["internal_missed_weekdays"]:
+            missed = ", ".join(
+                datetime.fromisoformat(d).strftime("%a")
+                for d in r["internal_missed_weekdays"]
+            )
+            bits.append(f"missed daily status on {missed}")
+        agg_lines.append(f"• `#{r['internal_channel_name']}` — " + "; ".join(bits))
+
+if green:
+    agg_lines.append("")
+    agg_lines.append("*Green:* " + ", ".join(f"`#{r['internal_channel_name']}`" for r in green))
+
+agg_lines.append("")
+agg_lines.append(f"Per-channel nudges have been posted to each `#____internal-*` above.")
+
+aggregate = {
+    "team_ops_channel_name": team_ops[0] if team_ops else None,
+    "team_ops_channel_id":   team_ops[1] if team_ops else None,
+    "green_count": len(green),
+    "gap_count":   len(gaps),
+    "message":     "\n".join(agg_lines),
+}
+
+with open(AGGREGATE_PATH, "w") as fh:
+    json.dump(aggregate, fh, indent=2)
+print(f"Aggregate report written — see {AGGREGATE_PATH}")
 EOF
 ```
 
@@ -320,29 +379,42 @@ python3 - <<'EOF'
 import json
 with open("/tmp/tdp-silent-dump/reports.json") as fh:
     reports = json.load(fh)
+with open("/tmp/tdp-silent-dump/aggregate_report.json") as fh:
+    aggregate = json.load(fh)
+
 if not reports:
     print("No internal channels found — nothing to post.")
     raise SystemExit
+
 for r in reports:
     status = "GREEN" if (r["shared_hit_slot"] and not r["internal_missed_weekdays"]) else "GAP"
     print(f"\n--- [{status}] #{r['internal_channel_name']} (id={r['internal_channel_id']}) ---")
     print(r["message"])
-print(f"\n{len(reports)} drafts ready. Review above.")
+
+print(f"\n--- [AGGREGATE] #{aggregate['team_ops_channel_name']} (id={aggregate['team_ops_channel_id']}) ---")
+print(aggregate["message"])
+
+print(f"\n{len(reports)} per-channel drafts + 1 aggregate to #{aggregate['team_ops_channel_name']}. Review above.")
 EOF
 ```
 
-**Stop here.** Ask the EA explicitly: *"Post these to Slack?"* Do not continue to Step 8 without a clear yes.
+**Stop here.** Ask the EA explicitly: *"Post these N per-channel messages + 1 aggregate to #team-operations?"* Do not continue to Step 8 without a clear yes.
 
 ## Step 8 — Post to Slack (live; only after explicit confirmation)
 
 This actually sends messages. **Never run this step automatically.** Only run it after the EA reviews the drafts from Step 7 and explicitly confirms.
 
-The posting script enforces two safety invariants:
-- The target channel name must start with `____internal-`. Any other name is refused.
-- The channel ID must match the one from `channel_map.json` for that internal name.
+The posting script enforces these safety invariants:
+- Per-channel posts: target channel name must start with `____internal-`. Any other name is refused.
+- Aggregate post: target channel name must equal `team-operations`. Any other name is refused.
+- Every channel ID must match the one from `channel_map.json` for that name.
+
+Locate this skill's `.env` next to `SKILL.md`. Override via `$TDP_SILENT_CHANNELS_ENV` if needed.
 
 ```bash
-set -a; source /Users/aalter/coding/tdp-agent-skills/skills/tdp-silent-channels/.env; set +a
+SKILL_ENV="${TDP_SILENT_CHANNELS_ENV:-$(find "${CLAUDE_PROJECT_DIR:-$PWD}" -type f -path '*/tdp-silent-channels/.env' -print -quit 2>/dev/null)}"
+[ -f "$SKILL_ENV" ] || { echo ".env not found — set TDP_SILENT_CHANNELS_ENV or run from the tdp-agent-skills repo."; exit 1; }
+set -a; source "$SKILL_ENV"; set +a
 python3 - <<'EOF'
 import json, os, urllib.request, urllib.parse, sys
 
@@ -354,6 +426,26 @@ with open("/tmp/tdp-silent-dump/channel_map.json") as fh:
     channel_map = json.load(fh)
 with open("/tmp/tdp-silent-dump/reports.json") as fh:
     reports = json.load(fh)
+with open("/tmp/tdp-silent-dump/aggregate_report.json") as fh:
+    aggregate = json.load(fh)
+
+def post(channel_id, text):
+    data = urllib.parse.urlencode({
+        "channel": channel_id,
+        "text": text,
+        "unfurl_links": "false",
+        "unfurl_media": "false",
+    }).encode()
+    req = urllib.request.Request(
+        "https://slack.com/api/chat.postMessage",
+        data=data,
+        headers={
+            "Authorization": f"Bearer {TOKEN}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read())
 
 sent = 0
 for r in reports:
@@ -368,23 +460,8 @@ for r in reports:
         print(f"REFUSED (id mismatch for {name}: report={ch_id} map={expected})")
         continue
 
-    data = urllib.parse.urlencode({
-        "channel": ch_id,
-        "text": r["message"],
-        "unfurl_links": "false",
-        "unfurl_media": "false",
-    }).encode()
-    req = urllib.request.Request(
-        "https://slack.com/api/chat.postMessage",
-        data=data,
-        headers={
-            "Authorization": f"Bearer {TOKEN}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    )
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            body = json.loads(resp.read())
+        body = post(ch_id, r["message"])
     except Exception as exc:
         print(f"FAIL #{name}: {exc}")
         continue
@@ -394,11 +471,30 @@ for r in reports:
     else:
         print(f"FAIL #{name}: {body.get('error')}")
 
-print(f"\nPosted {sent}/{len(reports)} messages.")
+print(f"\nPosted {sent}/{len(reports)} per-channel messages.")
+
+# ---- Aggregate report to #team-operations ----
+agg_name = aggregate.get("team_ops_channel_name")
+agg_id   = aggregate.get("team_ops_channel_id")
+
+if agg_name != "team-operations":
+    print(f"REFUSED aggregate (expected name 'team-operations', got {agg_name!r}) — not posted.")
+elif channel_map.get(agg_name, {}).get("id") != agg_id:
+    print(f"REFUSED aggregate (id mismatch: report={agg_id} map={channel_map.get(agg_name, {}).get('id')}) — not posted.")
+else:
+    try:
+        body = post(agg_id, aggregate["message"])
+    except Exception as exc:
+        print(f"FAIL aggregate #{agg_name}: {exc}")
+    else:
+        if body.get("ok"):
+            print(f"OK   aggregate posted to #{agg_name}")
+        else:
+            print(f"FAIL aggregate #{agg_name}: {body.get('error')}")
 EOF
 ```
 
-The bot must be invited to every `#____internal-*` channel (confirmed by EA at setup). If any post returns `not_in_channel`, invite **TDP Police** to that channel and re-run Step 8 — previously-posted channels will receive a duplicate unless you narrow the `reports.json` first.
+The bot must be invited to every `#____internal-*` channel **and to `#team-operations`** (confirmed by EA at setup). If any post returns `not_in_channel`, invite **TDP Police** to that channel and re-run Step 8 — previously-posted channels will receive a duplicate unless you narrow the `reports.json` first. The aggregate will also re-post on a re-run, so consider clearing `aggregate_report.json` if you only need to retry a few per-channel posts.
 
 ## Known limitations
 

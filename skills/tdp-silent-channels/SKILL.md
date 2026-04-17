@@ -22,16 +22,26 @@ This skill's behavior depends on these facts being true in the handbook. Step 0 
 
 Resolve the handbook path from `$TDP_HANDBOOK_PATH` (override), then `$HOME/coding/TDP-handbook` (default). If neither exists, **stop and ask the user for the correct path** before continuing.
 
-1. Resolve the path and check that the handbook repo is up to date with origin:
+1. Resolve the path and fast-forward the handbook to `origin/main` so we always read the latest SOPs:
 
    ```bash
    HANDBOOK_DIR="${TDP_HANDBOOK_PATH:-$HOME/coding/TDP-handbook}"
    [ -d "$HANDBOOK_DIR" ] || { echo "Handbook not found at $HANDBOOK_DIR — set TDP_HANDBOOK_PATH or ask user."; exit 1; }
-   git -C "$HANDBOOK_DIR" fetch origin main --quiet && \
-   git -C "$HANDBOOK_DIR" rev-list --left-right --count HEAD...origin/main
-   ```
 
-   If the right-hand count is non-zero, warn the user that the local handbook is behind `origin/main` and may not reflect the latest SOPs. Continue anyway.
+   # Refuse to pull if the working tree is dirty — don't risk clobbering user edits.
+   if ! git -C "$HANDBOOK_DIR" diff --quiet || ! git -C "$HANDBOOK_DIR" diff --cached --quiet; then
+     echo "Handbook has uncommitted changes — skipping pull. Reading local state as-is." >&2
+   else
+     git -C "$HANDBOOK_DIR" fetch origin main --quiet
+     # Fast-forward only; never rewrite or merge. If local main has diverged, stop and ask the user.
+     if ! git -C "$HANDBOOK_DIR" merge-base --is-ancestor HEAD origin/main; then
+       echo "Handbook HEAD has diverged from origin/main — stop and ask user how to reconcile." >&2
+       exit 1
+     fi
+     git -C "$HANDBOOK_DIR" merge --ff-only origin/main --quiet
+   fi
+   git -C "$HANDBOOK_DIR" rev-parse --short HEAD
+   ```
 
 2. Read the following SOP files in full (paths relative to `$HANDBOOK_DIR`):
    - `content/docs/sop/process/communication-standards.mdx`

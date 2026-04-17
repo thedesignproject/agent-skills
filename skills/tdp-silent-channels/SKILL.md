@@ -14,7 +14,7 @@ This skill's behavior depends on these facts being true in the handbook. Step 0 
 1. **Shared customer channel name format:** `#tdp-[customer]`
 2. **Internal customer channel name format:** `#____internal-[customer]`
 3. **Shared-channel comms cadence:** twice per week — **Monday** and **Thursday**
-4. **Internal-channel comms cadence:** daily Associate → Lead status update, **every weekday**, posted end of workday (5–6 pm Associate's TZ), as a **human message** (no bot)
+4. **Internal-channel comms cadence:** daily Associate → Lead status update, **every weekday**, posted end of workday (5–6 pm Associate's TZ). Any message in the channel on an expected weekday counts as activity — no bots post here, so no bot filtering is applied.
 5. **Who runs this skill:** the executive assistant
 6. **When this skill runs:** **Tuesday** and **Friday** (the day after each expected cadence slot)
 
@@ -155,13 +155,8 @@ elif weekday == 4:
 else:
     expected_weekdays = previous_weekdays(today, 2)
 
-# ---- Message filters ----
-def is_human_message(m):
-    return (
-        m.get("type") == "message"
-        and not m.get("bot_id")
-        and "subtype" not in m
-    )
+def is_message(m):
+    return m.get("type") == "message"
 
 # Per-channel status (everything, not just misses)
 shared_status = {}     # name -> {hit_slot, last_str, days_silent}
@@ -182,10 +177,10 @@ with zipfile.ZipFile(DUMP_PATH) as zf:
 
         with zf.open(fname) as fh:
             messages = json.load(fh)
-        human = [m for m in messages if is_human_message(m)]
+        msgs = [m for m in messages if is_message(m)]
 
-        if human:
-            latest_ts = max(float(m["ts"]) for m in human)
+        if msgs:
+            latest_ts = max(float(m["ts"]) for m in msgs)
             latest_dt = datetime.fromtimestamp(latest_ts, tz=timezone.utc)
             last_str = latest_dt.strftime("%Y-%m-%d")
             days_silent = (today - latest_dt.date()).days
@@ -198,7 +193,7 @@ with zipfile.ZipFile(DUMP_PATH) as zf:
                 slot_date is not None
                 and any(
                     datetime.fromtimestamp(float(m["ts"]), tz=timezone.utc).date() == slot_date
-                    for m in human
+                    for m in msgs
                 )
             )
             shared_status[channel_name] = {
@@ -209,7 +204,7 @@ with zipfile.ZipFile(DUMP_PATH) as zf:
         elif kind == "internal":
             active_dates = {
                 datetime.fromtimestamp(float(m["ts"]), tz=timezone.utc).date()
-                for m in human
+                for m in msgs
             }
             missed = [d for d in expected_weekdays if d not in active_dates]
             internal_status[channel_name] = {
@@ -234,7 +229,7 @@ elif not shared_misses:
     print(f"All active shared channels had a team message on {slot_date.isoformat()}.\n")
 else:
     print(f"Shared channels missing a team message on {slot_date.isoformat()}:\n")
-    print(f"{'Channel':<40} {'Last Human Msg':<22} {'Days Silent'}")
+    print(f"{'Channel':<40} {'Last Message':<22} {'Days Silent'}")
     print("-" * 74)
     for name, last, days in shared_misses:
         flag = "  ⚠ 7+d" if days >= 7 else ""
@@ -508,5 +503,5 @@ The bot must be invited to every `#____internal-*` channel **and to `#team-opera
 
 ## Known limitations
 
-- **Shared-channel author attribution.** The script counts any non-bot human message as hitting the cadence slot, so a customer-only post (with no designer reply) currently reads as compliant. Resolving this requires a TDP team-member user-ID allowlist.
+- **Shared-channel author attribution.** The script counts any message as hitting the cadence slot, so a customer-only post (with no designer reply) currently reads as compliant. Resolving this requires a TDP team-member user-ID allowlist.
 - **Response timeline & Morning Context checks** (Lead → Associate) are not yet verified; those would require thread/author analysis and role metadata.

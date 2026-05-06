@@ -1,73 +1,54 @@
 ---
 name: agentic-design-systems
-description: Methodology for building a component library that AI agents can design with accurately and consistently. Use when the user wants to design, structure, or extend a design system intended for AI consumption — encoding components as machine-readable metadata (props, relationships, tokens, anti-patterns) rather than prose docs. Triggers include: "agentic design system", "design system for Claude/AI", "component metadata schema", "make my design system AI-readable", or planning a new UI library where an agent will be the primary consumer.
+description: Use when designing, scaffolding, extending, or auditing a component library whose primary consumer is an AI agent — i.e. the design system needs machine-readable metadata (props, variants, relationships, tokens, anti-patterns) rather than only prose docs. Triggers include "agentic design system", "design system for AI/Claude", "make my design system AI-readable", "component metadata schema", "scaffold a UI library for an agent", or planning a new component library where the main consumer is an LLM. Don't use this skill for purely human-facing design system work — use figma:figma-generate-library for that.
 ---
 
-# Building an Agentic Design System
+# Agentic Design Systems
 
-A step-by-step methodology for creating a component library that an AI agent (like Claude) can design with — accurately, consistently, and without inventing patterns.
+When this skill triggers, you're helping the user build, extend, or audit a component library whose primary consumer is an AI agent. The bar: given a prose request like *"Build a confirmation modal with a destructive action,"* an agent picks the right component, the right variant, and the right tokens — without inventing patterns.
 
----
-
-## The core idea
-
-Most design systems are written for humans who can parse prose, infer context, and remember conventions. Agents can't. They need the same decisions encoded as **structured, queryable metadata** living alongside each component.
-
-The goal isn't new documentation. It's the same documentation, translated to a machine-readable format so an agent can answer:
-
-- *Should I use this component?*
-- *Which variant?*
-- *What goes inside it?*
-- *What rules must I obey?*
-- *What should I never do?*
+This skill gives you the schema, the workflow, and the principles. Adapt it to where the user is.
 
 ---
 
-## The mental model: three pillars per component
+## Diagnose first
 
-Every component is the intersection of three things:
+Before producing anything, figure out which mode applies:
 
-| Pillar | What it answers | Example |
+- **Greenfield** — user is starting a new system intended for agent consumption. Walk through the [build workflow](#build-workflow). Start with the schema and one worked component (Button is canonical); don't try to scaffold everything at once.
+- **Retrofitting** — user has a component library and wants to make it agent-readable. Skip workspace setup. Add `meta.types.ts`, then write a `.meta.ts` per component, then build the index and validator. Anti-patterns first (see [Step 5](#step-5--anti-patterns-first)).
+- **Auditing** — user has metadata already. Score each component against the [four pillars](#the-four-pillars) and the [validator checks](#step-9--metadata-validator). Flag missing relationships, prose anti-patterns, raw global tokens, and ungrounded variant axes.
+- **Single component** — user wants to add or fix one component. Generate the full file set in [Step 3](#step-3--build-one-component-end-to-end). Metadata ships with the component or it doesn't ship.
+
+If the prompt is ambiguous, ask one targeted question — don't guess.
+
+---
+
+## The four pillars
+
+Treat every component as the intersection of four things. Most metadata schemas only model the first; that's why agents misuse the components.
+
+| Pillar | What it answers | Failure mode if missing |
 |---|---|---|
-| **Props** | What the agent *sets* | `appearance: "primary" \| "secondary"` |
-| **Relationships** | What the agent must *understand* before placing the component | `mustBeChildOf: ["Form"]`, `triggers: ["formSubmit"]` |
-| **Tokens** | The design values bound to this component | `color-button-primary-bg`, `spacing-button-padding-x-md` |
+| **Props** | What you set | (always present) |
+| **Variants** | Which combination to pick | Agent picks invalid combinations |
+| **Relationships** | Where the component fits structurally and a11y-wise | Agent generates code that compiles but is structurally wrong |
+| **Tokens** (component-scoped) | Which design values bind to this component | Agent invents colors and spacing |
 
-Most metadata schemas miss **Relationships** and **component-scoped Tokens**. Those are exactly where agents make the most mistakes.
+Plus `aiHints` — the meta layer that tells an agent *when* to use the component, *which* variant fits *which* situation, and *what never to do*.
 
----
+### Four design decisions baked into the schema
 
-## Four design decisions that shape the schema
-
-### 1. States are implicit in tokens
-Don't define a separate `states` block. Encode interaction states as token suffixes:
-```
-button-primary-bg
-button-primary-bg-hover
-button-primary-bg-pressed
-button-primary-bg-disabled
-```
-Theming becomes a token swap. There is one source of truth.
-
-### 2. Variants are a matrix, not a flat enum
-Declare the **axes** (e.g. `appearance × size × density`) and let the agent pick a cell. Add `invalidCombinations` for cells that shouldn't ship.
-
-### 3. Accessibility folds into Relationships
-ARIA `role`, `keyboardSupport`, and `screenReader` behavior are relational — they describe how the component fits into the document and the user's interaction model. Keeping them in `relationships` keeps the schema lean.
-
-### 4. Anti-patterns are first-class
-Every anti-pattern is a structured triple — never prose:
-```ts
-{
-  scenario: "Two appearance='primary' buttons in the same section",
-  reason: "Flattens hierarchy — user can't tell which action is canonical",
-  alternative: "One primary, the rest secondary or ghost"
-}
-```
+- **States are implicit in tokens, not a separate pillar.** Encode `button-primary-bg-hover`, `button-primary-bg-disabled`, etc. Theming becomes a token swap; one source of truth.
+- **Variants are a matrix, not a flat enum.** Declare axes (`appearance × size × density`) and let the agent pick a cell. Use `invalidCombinations` for cells that shouldn't ship.
+- **Accessibility folds into Relationships.** ARIA `role`, `keyboardSupport`, and `screenReader` describe how the component fits into the document and interaction model — that's relational. No separate a11y pillar.
+- **Anti-patterns are first-class and structured.** Never prose. Always `{scenario, reason, alternative}` triples — they force precision.
 
 ---
 
-## The schema (four pillars + aiHints)
+## The schema (canonical contract)
+
+Write this once at `meta.types.ts`. Every component's `.meta.ts` imports it and is type-checked. The schema *is* the contract.
 
 ```ts
 interface ComponentMeta {
@@ -89,15 +70,15 @@ interface ComponentMeta {
   };
 
   relationships: {
-    requires?: string[];
+    requires?: string[];           // contexts/providers above
     mustBeChildOf?: string[];
     mustBeParentOf?: string[];
     optionalSibling?: string[];
     commonPartners?: string[];
-    triggers?: string[];
+    triggers?: string[];           // events emitted
     blocksWhen?: { when: string; effect: string }[];
-    exposesState?: string[];
-    role: string;              // a11y, folded in
+    exposesState?: string[];       // state descendants can read
+    role: string;                  // a11y
     keyboardSupport: string;
     screenReader: string;
   };
@@ -124,97 +105,103 @@ interface ComponentMeta {
 }
 ```
 
+When generating a component's `.meta.ts`, fill every field that applies. Empty arrays are fine; missing keys aren't — that's what the validator catches.
+
 ---
 
-## The 10 steps
+## Build workflow
 
-### Step 1 — Pick a workspace shape
-Recommended: a sibling package inside the consuming app's monorepo (`packages/ui-next/`). Switchover later is just an import rewrite. Avoid a separate repo unless you need independent versioning.
+### Step 1 — Workspace shape
+Recommend a sibling package inside the consuming app's monorepo (`packages/ui-next/`). Switchover later is just an import rewrite. A separate repo only makes sense when independent versioning is required.
 
-### Step 2 — Define the schema as a TypeScript contract
-Write `meta.types.ts` once. Every component's metadata file imports it and is type-checked. The schema *is* the contract.
+### Step 2 — Schema as TypeScript contract
+Write `meta.types.ts` before any components. Everything else flows from it.
 
-### Step 3 — Build one component end-to-end as the worked example
-Pick something small and high-traffic (Button is canonical). Ship the full set of files together:
+### Step 3 — Build one component end-to-end
+Pick something small and high-traffic. Button is canonical. Ship the full set together:
+
 ```
 Button/
   Button.tsx              ← implementation
-  Button.meta.ts          ← the four pillars + aiHints
+  Button.meta.ts          ← four pillars + aiHints
   Button.tokens.css       ← component-scoped tokens
   Button.stories.tsx      ← visual test surface
   Button.test.tsx         ← behavior tests
   index.ts                ← single canonical export
 ```
-Storybook is the harness — wire it up early. Add `.storybook/main.ts` (story discovery) and `.storybook/preview.ts` (theme CSS imports) so stories render. One story per variant matrix cell makes design-space regressions obvious at a glance.
 
-The metadata is not optional and not deferred. It ships with the component or the component doesn't ship.
+Wire up Storybook early (`.storybook/main.ts` for story discovery, `.storybook/preview.ts` for theme imports). One story per variant matrix cell makes design-space regressions obvious at a glance.
 
-### Step 4 — Encode tokens at two levels
-- `tokens/core.css` — the raw, brand-level palette and scales (`--color-brand-600`, `--space-4`).
-- `tokens/themes/*.css` — map component-scoped tokens (`--button-primary-bg`) to the core values.
+Metadata ships with the component or the component doesn't ship. Don't defer it.
 
-The component CSS only ever references component-scoped tokens. Theme swaps become mechanical.
+### Step 4 — Tokens at two levels
+- `tokens/core.css` — raw brand palette and scales (`--color-brand-600`, `--space-4`).
+- `tokens/themes/*.css` — map component-scoped tokens (`--button-primary-bg`) to core values.
+
+Component CSS only ever references component-scoped tokens. Theme swaps stay mechanical.
 
 ### Step 5 — Anti-patterns first
-For each component, write the `antiPatterns` block *before* the implementation. It forces precision: you can't write "don't overuse primary buttons" — you have to write the scenario, the reason, and the alternative. This document drives the implementation.
+For each component, write the `antiPatterns` array *before* writing the implementation. The structured-triple format (`scenario`, `reason`, `alternative`) forces precision — you can't write "don't overuse primary buttons"; you have to write *which scenario*, *why it's wrong*, *what to do instead*. The anti-patterns end up driving the API.
 
-### Step 6 — Use Variant axes to model design language
-Variants aren't a flat list of strings. They're a coordinate system. `appearance × size × density` tells the agent how to pick along independent axes — and `invalidCombinations` keeps it from picking a cell that shouldn't exist.
+### Step 6 — Variant axes as a coordinate system
+Variants aren't a flat list of strings. Declare axes (`appearance × size × density`) so the agent picks along independent dimensions. Use `invalidCombinations` to rule out cells that shouldn't ship (e.g. `appearance: "ghost" × size: "xs"` — too small to be tappable).
 
-### Step 7 — Encode Relationships as machine-checkable rules
-- `requires` — the contexts/providers that must exist above
+### Step 7 — Relationships as machine-checkable rules
+- `requires` — providers that must exist above
 - `mustBeChildOf` / `mustBeParentOf` — structural constraints
 - `triggers` — events emitted
 - `blocksWhen` — prop-state-dependent behavior
 - `exposesState` — what descendants can read
 
-This is where agents stop building things that compile but are structurally wrong.
+This is the pillar that prevents agents from generating code that compiles but is structurally wrong.
 
-### Step 8 — Build a hierarchical metadata index
-Add `metadata/index.json`: a flat list of `{name, category, path, keywords, priority}`. The agent scans this first to find candidates, then reads the full `.meta.ts` only for relevant components. Cheap discovery, expensive depth.
+### Step 8 — Hierarchical metadata index
+Generate `metadata/index.json` — a flat list of `{name, category, path, keywords, priority}`. Agents scan this first to shortlist candidates, then read the full `.meta.ts` only for relevant components. Cheap discovery, expensive depth.
 
-Generate it from a script (`scripts/build-index.ts`) that walks every `*.meta.ts`, dynamically imports each one, and writes the JSON. Run it on every metadata change so the index can never lie about what exists.
+Build with a script (`scripts/build-index.ts`) that walks every `*.meta.ts`, dynamically imports each one, and writes the JSON. Run it on every metadata change so the index can never lie about what exists.
 
-### Step 9 — Write a metadata validator
+### Step 9 — Metadata validator
 A short script (`scripts/validate-metadata.ts`) walks every `*.meta.ts` (via fast-glob), dynamically imports each one, shape-checks the export, and asserts:
+
 - Every variant axis cell appears in `aiHints.selectionCriteria` or `variants.purpose`
 - Every `tokens.*` key is component-scoped (kebab-case of the component name)
 - `antiPatterns` is non-empty for `priority: "high"` components
-- `relationships.role` / `keyboardSupport` / `screenReader` are non-empty (a11y is folded into Relationships, so this enforces the schema decision)
+- `relationships.role` / `keyboardSupport` / `screenReader` are non-empty (enforces the "a11y folds into Relationships" decision)
 - `invalidCombinations` references only declared axis values
 
-Run it in CI. If the metadata is wrong, the build fails.
+Run in CI. If the metadata is wrong, the build fails. The schema is enforced, not aspirational.
 
-### Step 10 — Switchover plan
-You don't switch over at the end. You switch over per-component as parity is reached.
-- Keep an **API parity tracker** (a markdown checklist of the old library's exports → new equivalents).
-- Write a **token bridge** mapping the old library's tokens to the new component-scoped ones.
-- Migrate page-by-page with a codemod that rewrites imports.
+### Step 10 — Switchover (per-component, not big-bang)
+Don't switch over at the end — switch per-component as parity is reached.
+
+- **API parity tracker** — markdown checklist of old library exports → new equivalents.
+- **Token bridge** — map old tokens to new component-scoped ones.
+- **Codemod** — rewrite imports page-by-page.
 
 ---
 
-## The principles, restated
+## Principles
 
 - **Lean over generated.** Hand-write metadata for the first ~10 components. Automate only after the patterns are obvious.
 - **Direct imports, no barrels.** One canonical path per component. Two ways in means the agent picks wrong.
-- **Co-locate everything.** The component, its metadata, its tokens, its stories, its tests — one folder.
+- **Co-locate everything.** Component, metadata, tokens, stories, tests — one folder.
 - **Anti-patterns drive design.** Write them first. They reveal the contract.
 - **Component-scoped tokens.** Never reference raw global tokens from a component's CSS.
 - **States live in tokens.** No `states` block. No `behavior.states` array.
 - **A11y is relational.** It belongs in Relationships, not its own pillar.
-- **The schema is the contract.** If the metadata is wrong, the build fails.
+- **The schema is the contract.** Validator runs in CI; failing metadata fails the build.
 
 ---
 
 ## What success looks like
 
-You hand Claude a Figma screenshot or a prose request — *"Build a confirmation modal with a destructive action"* — and it:
+The user hands an agent a Figma screenshot or a prose request — *"Build a confirmation modal with a destructive action"* — and the agent:
 
 1. Scans `metadata/index.json` and shortlists `Modal`, `Button`, `Heading`.
-2. Reads each component's `.meta.ts`.
-3. Sees `Button.relationships.mustBeChildOf` includes `ModalFooter`, picks `appearance: "danger"` from `aiHints.selectionCriteria`.
-4. Avoids two `appearance: "primary"` siblings because of `antiPatterns`.
+2. Reads each shortlisted component's `.meta.ts`.
+3. Sees `Button.relationships.mustBeChildOf` includes `ModalFooter`; picks `appearance: "danger"` from `aiHints.selectionCriteria`.
+4. Avoids two `appearance: "primary"` siblings because `antiPatterns` flags it.
 5. References component-scoped tokens — never invents a color.
 6. Generates code that follows the contract on the first try.
 
-That's the bar.
+That's the bar. If the metadata can't get an agent to that outcome, fix the metadata.

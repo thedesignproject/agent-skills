@@ -12,6 +12,13 @@ Practical guides, skills, and references for getting the most out of AI-powered 
 |-------|-------------|
 | [create-prd](skills/create-prd/) | Generate structured PRDs from feature request transcripts or descriptions. Researches your codebase for accurate technical scoping and optionally creates Linear projects and issues. |
 | [presentation](skills/presentation/) | Create polished single-file HTML/CSS/JS slide deck presentations with animations, keyboard/click/swipe navigation, and progressive bullet reveal. |
+| [pr-branch-naming](skills/pr-branch-naming/) | Generate a conventionally-named branch and PR title from a feature description, with optional one-step branch checkout and draft PR creation. |
+
+## Guides
+
+| Guide | Description |
+|-------|-------------|
+| [pr-and-branch-naming](guides/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
 
 ## Contributing
 

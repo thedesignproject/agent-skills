@@ -18,7 +18,7 @@ Practical guides, skills, and references for getting the most out of AI-powered 
 
 | Guide | Description |
 |-------|-------------|
-| [pr-and-branch-naming](guides/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
+| [pr-and-branch-naming](guides/github-for-designers/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
 
 ## Contributing
 

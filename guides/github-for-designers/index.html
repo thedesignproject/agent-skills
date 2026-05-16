@@ -19,15 +19,15 @@
 
   /* ===== Design Tokens ===== */
   :root {
-    --primary: #2D1B6B;
-    --primary-dark: #1E1247;
-    --primary-light: #4836A8;
+    --primary: #5B5BF0;
+    --primary-dark: #4A4AD0;
+    --primary-light: #7B7BFF;
     --secondary: #FF6B47;
     --secondary-light: #FF8A6A;
     --light: #FAF5F0;
     --light-dark: #F0E8E0;
-    --white: #FFFFFF;
-    --dark: #1C1C1C;
+    --white: #FAF7F4;
+    --dark: #162825;
     --dark-muted: #555555;
 
     --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -86,12 +86,7 @@
 
   /* ===== Footer ===== */
   .slide-footer {
-    position: absolute;
-    bottom: 2vh; left: 4vw; right: 4vw;
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: clamp(10px, 1vw, 14px);
-    font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-    opacity: 0.5;
+    display: none;
   }
   .slide--primary .slide-footer,
   .slide--secondary .slide-footer { color: var(--white); }
@@ -110,11 +105,18 @@
     letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5;
   }
   .header-chrome .logo {
-    font-size: clamp(14px,1.3vw,20px); font-weight: 800; letter-spacing: -0.02em;
+    font-size: 0;
+    width: clamp(28px, 2.6vw, 40px);
+    height: clamp(28px, 2.6vw, 40px);
+    background-image: url('assets/Logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: brightness(0) invert(1);
   }
   .slide--light .header-chrome { border-top-color: rgba(28,28,28,0.1); }
-  .slide--light .header-chrome .tagline,
-  .slide--light .header-chrome .logo { color: var(--dark); }
+  .slide--light .header-chrome .tagline { color: var(--dark); }
+  .slide--light .header-chrome .logo { filter: brightness(0); }
 
   /* ===== Decorative Shapes ===== */
   .shape {
@@ -129,36 +131,18 @@
     margin-top: calc(var(--my) * var(--parallax) * 1px);
   }
 
-  .shape-pill {
-    width: 180px; height: 80px;
-    border-radius: 40px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.22);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3);
-    animation: float1 8s ease-in-out infinite;
+  /* Image-based shapes (TDP brand assets) */
+  .shape-img {
+    display: block;
+    object-fit: contain;
+    width: auto;
+    height: auto;
+    max-width: none;
   }
-  .shape-sphere {
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.05) 70%);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.18);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.08), inset 0 -4px 12px rgba(255,255,255,0.1);
-    animation: float3 9s ease-in-out infinite;
-  }
-  .shape-star {
-    width: 120px; height: 120px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.1) 100%);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.1));
-    animation: float2 10s ease-in-out infinite;
-  }
-  .slide--light .shape {
-    background: linear-gradient(135deg, rgba(45,27,107,0.12) 0%, rgba(255,107,71,0.06) 100%);
-    border: 1px solid rgba(45,27,107,0.1);
-  }
+  .shape--luminosity { mix-blend-mode: luminosity; }
+  .shape--float-1 { animation: float1 11s ease-in-out infinite; }
+  .shape--float-2 { animation: float2 10s ease-in-out infinite; }
+  .shape--float-3 { animation: float3 12s ease-in-out infinite; }
 
   @keyframes float1 {
     0%, 100% { transform: translateY(0) rotate(0); }
@@ -385,7 +369,7 @@
     display: block;
   }
   .tool-badge .badge-icon--fit {
-    background: #fff;
+    background: #FAF7F4;
     padding: 4px;
   }
   .tool-badge .badge-icon--fit img { object-fit: contain; }
@@ -510,7 +494,7 @@
     gap: 12px;
     margin-top: 14px;
     padding: 12px 18px 12px 14px;
-    background: #fff;
+    background: #FAF7F4;
     border-radius: 12px;
     max-width: 460px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.22);
@@ -518,7 +502,7 @@
   }
   .info-card .info-icon {
     width: 30px; height: 30px;
-    background: #000;
+    background: #162825;
     border-radius: 8px;
     padding: 6px;
     flex-shrink: 0;
@@ -623,7 +607,7 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 24px 70px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2);
-    background: #fff;
+    background: #FAF7F4;
   }
   .pr-screenshot img {
     display: block;
@@ -653,6 +637,12 @@
   .pr-marker.visible {
     opacity: 1;
     transform: scale(1);
+  }
+  .slide--secondary.slide-pr-anatomy .bullet-num {
+    box-shadow: 0 0 0 2px var(--secondary);
+  }
+  .slide--secondary.slide-pr-anatomy .pr-marker {
+    background: var(--secondary);
   }
 
   /* ===== Slide 6: Two-Column with Git Log ===== */
@@ -854,6 +844,35 @@
     font-weight: 500;
     opacity: 0.75;
     letter-spacing: 0.04em;
+  }
+  .slide-closing .closing-links {
+    margin-top: clamp(40px, 5vh, 80px);
+    display: flex;
+    gap: clamp(20px, 3vw, 48px);
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .slide-closing .closing-link-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: clamp(10px, 0.85vw, 13px);
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  .slide-closing .closing-link-item:hover { opacity: 1; }
+  .slide-closing .closing-link-icon {
+    width: clamp(14px, 1.1vw, 18px);
+    height: clamp(14px, 1.1vw, 18px);
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .slide-closing .closing-link-icon--svg {
+    stroke: currentColor;
   }
   .slide-closing .closing-link {
     margin-top: clamp(40px, 5vh, 80px);
@@ -1110,7 +1129,7 @@
   }
   .skill-link-icon {
     width: 30px; height: 30px;
-    background: #fff;
+    background: #FAF7F4;
     border-radius: 8px;
     padding: 3px;
     flex-shrink: 0;
@@ -1245,13 +1264,15 @@
 
   <!-- ===== Slide 1: Title ===== -->
   <section class="slide slide--primary slide-title active" data-theme="dark">
-    <div class="shape shape-pill shape-enter-left" style="top:14%; left:-5%; width:220px;"></div>
-    <div class="shape shape-sphere shape-enter-right" style="top:-10%; right:-3%; width:200px; height:200px;"></div>
-    <div class="shape shape-star shape-enter-bottom" style="bottom:-8%; left:18%;"></div>
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--luminosity shape--float-1 shape-enter-left" alt="" style="top:-16%; left:-8%; width:38vw; opacity:0.3;">
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--luminosity shape--float-2 shape-enter-right" alt="" style="top:-10%; right:-7%; width:32vw; opacity:0.45; z-index:3; animation-delay:-4s;">
+    <img src="assets/figma-flower.png" class="shape shape-img shape--luminosity shape--float-3 shape-enter-left" alt="" style="top:30%; left:-10%; width:24vw; opacity:0.3; animation-delay:-2s;">
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--luminosity shape--float-2 shape-enter-bottom" alt="" style="bottom:-14%; left:-5%; width:36vw; opacity:0.3; animation-delay:-5s;">
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--luminosity shape--float-1 shape-enter-bottom" alt="" style="bottom:-10%; right:-5%; width:26vw; opacity:0.3; animation-delay:-3s;">
     <div class="glass-panel"></div>
 
     <div class="header-chrome">
-      <span class="tagline">TDP Workshop · 2026</span>
+      <span class="tagline">2026</span>
       <span class="logo">TDP</span>
     </div>
 
@@ -1268,8 +1289,7 @@
       <span class="logo">TDP</span>
     </div>
 
-    <div class="shape shape-sphere shape-enter-right" style="top:5%; right:8%; width:18vw; max-width:240px;"></div>
-    <div class="shape shape-pill shape-enter-left" style="bottom:18%; left:-5%; width:200px;"></div>
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--float-2 shape-enter-right" alt="" style="top:50%; right:-15%; transform:translateY(-50%); width:50vw; opacity:0.85; z-index:1;">
 
     <div class="slide-content">
       <div class="heading-xl anim anim-d1">Why does a</div>
@@ -1291,8 +1311,9 @@
       <span class="logo">TDP</span>
     </div>
 
-    <div class="shape shape-sphere shape-enter-right" style="top:-8%; right:-4%; width:180px; height:180px; opacity:0.4;"></div>
-    <div class="shape shape-pill shape-enter-left" style="bottom:-6%; left:-4%; width:200px; height:90px; opacity:0.35;"></div>
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--luminosity shape--float-2 shape-enter-right" alt="" style="top:-12%; right:-8%; width:28vw; opacity:0.35;">
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--luminosity shape--float-1 shape-enter-left" alt="" style="bottom:-10%; left:-6%; width:30vw; opacity:0.3; animation-delay:-3s;">
+    <img src="assets/figma-flower.png" class="shape shape-img shape--luminosity shape--float-3 shape-enter-right" alt="" style="bottom:14%; right:-8%; width:18vw; opacity:0.3; animation-delay:-5s;">
 
     <div class="slide-content">
       <div>
@@ -1325,16 +1346,8 @@
           <span class="toc-num">06</span>
           <span class="toc-title">Pull <em>Requests</em></span>
         </div>
-        <div class="toc-entry anim anim-d6" data-jump-slide="9">
-          <span class="toc-num">07</span>
-          <span class="toc-title">Squash &amp; <em>merge</em></span>
-        </div>
         <div class="toc-entry anim anim-d6" data-jump-slide="10">
-          <span class="toc-num">08</span>
-          <span class="toc-title">Reviews</span>
-        </div>
-        <div class="toc-entry anim anim-d7" data-jump-slide="11">
-          <span class="toc-num">09</span>
+          <span class="toc-num">07</span>
           <span class="toc-title">Gotchas</span>
         </div>
       </div>
@@ -1402,6 +1415,7 @@
       <span class="logo">TDP</span>
     </div>
 
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--float-2 shape-enter-right" alt="" style="top:-10%; right:-4%; width:20vw; opacity:1;">
     <div class="shape shape-pill shape-enter-right" style="top:8%; right:-6%; width:240px; height:100px; opacity:0.35;"></div>
     <div class="shape shape-sphere shape-enter-left" style="bottom:-8%; left:-4%; width:200px; height:200px; opacity:0.35;"></div>
 
@@ -1532,8 +1546,8 @@
       <span class="logo">TDP</span>
     </div>
 
-    <div class="shape shape-pill shape-enter-right" style="top:8%; right:-8%; width:220px; height:90px; opacity:0.35; z-index:1;"></div>
-    <div class="shape shape-sphere shape-enter-bottom" style="bottom:-10%; left:-4%; width:200px; height:200px; opacity:0.3; z-index:1;"></div>
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--float-1 shape-enter-right" alt="" style="top:-8%; right:-6%; width:18vw; opacity:1; z-index:1;">
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--float-3 shape-enter-bottom" alt="" style="bottom:6%; right:4%; width:7vw; opacity:1; z-index:1;">
 
     <div class="slide-content pr-anatomy-content">
 
@@ -1584,6 +1598,7 @@
     </div>
 
     <div class="shape shape-star shape-enter-right" style="top:50%; right:-12%; transform:translateY(-50%); width:480px; height:480px; opacity:0.7; z-index:1;"></div>
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--float-2 shape-enter-right" alt="" style="top:50%; right:-4%; transform:translateY(-50%); width:24vw; opacity:1; z-index:2;">
 
     <div class="slide-content">
       <div>
@@ -1646,8 +1661,42 @@
     </div>
   </section>
 
-  <!-- ===== Slide 9: PR Anatomy ===== -->
-  <section class="slide slide--primary slide-learn slide-pr-anatomy" data-theme="dark" data-bullets="4">
+  <!-- ===== Slide 9: PRs are like a design crit ===== -->
+  <section class="slide slide--light slide-llm" data-theme="light">
+    <div class="header-chrome">
+      <span class="tagline">Pull Requests</span>
+      <span class="logo">TDP</span>
+    </div>
+
+    <div class="shape shape-pill shape-enter-left" style="top:-8%; left:-4%; width:220px; height:90px; opacity:0.4;"></div>
+
+    <div class="slide-content">
+      <div class="llm-text">
+        <div class="heading-lg anim anim-d1">PRs are your</div>
+        <div class="heading-lg anim anim-d2"><span class="italic-accent">proposal to ship</span></div>
+        <div class="body-text anim anim-d3">A pull request bundles your branch — every commit, every change — into one proposal to merge into main. It's where your work gets seen: reviewers scan the diff, leave comments, and approve before anything goes live.</div>
+      </div>
+      <div class="llm-visual anim anim-d4">
+        <div class="git-log">
+          <div class="git-log-header"><span></span><span></span><span></span></div>
+          <div class="git-log-prompt">$ gh pr list</div>
+          <div class="git-log-line"><span class="hash">#42</span> Empty state for dashboard</div>
+          <div class="git-log-line"><span class="hash">#41</span> Tighter button padding on landing</div>
+          <div class="git-log-line"><span class="hash">#40</span> Pricing copy from Figma</div>
+          <div class="git-log-line"><span class="hash">#39</span> Heading fixes — landing page</div>
+          <div class="git-log-line"><span class="hash">#38</span> Initial /settings scaffold</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Pull Requests</span>
+      <span class="italic-accent">open for review</span>
+    </div>
+  </section>
+
+  <!-- ===== Slide 10: PR Anatomy ===== -->
+  <section class="slide slide--secondary slide-learn slide-pr-anatomy" data-theme="dark" data-bullets="4">
     <div class="header-chrome">
       <span class="tagline">Pull Requests</span>
       <span class="logo">TDP</span>
@@ -1655,6 +1704,7 @@
 
     <div class="shape shape-pill shape-enter-left" style="top:8%; left:-6%; width:240px; height:100px; opacity:0.3; z-index:1;"></div>
     <div class="shape shape-sphere shape-enter-bottom" style="bottom:-10%; right:-4%; width:200px; height:200px; opacity:0.3; z-index:1;"></div>
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--float-3 shape-enter-right" alt="" style="top:-8%; right:-6%; width:16vw; opacity:1; z-index:1; transform:rotate(35deg);">
 
     <div class="slide-content pr-anatomy-content">
 
@@ -1704,82 +1754,15 @@
     </div>
   </section>
 
-  <!-- ===== Slide 10: Merge vs Squash & Merge ===== -->
-  <section class="slide slide--light slide-vs" data-theme="light">
-    <div class="header-chrome">
-      <span class="tagline">Glossary</span>
-      <span class="logo">TDP</span>
-    </div>
-
-    <div class="shape shape-star shape-enter-right" style="top:8%; right:6%; width:120px; height:120px; opacity:0.45;"></div>
-    <div class="shape shape-pill shape-enter-left" style="bottom:12%; left:-4%; width:160px; height:70px; opacity:0.35;"></div>
-
-    <div class="slide-content">
-      <p class="vs-eyebrow anim anim-d1">Two ways to merge</p>
-      <div class="vs-grid">
-        <div class="vs-side anim anim-d2">
-          <div class="vs-term"><em>Merge</em></div>
-          <div class="vs-def">Keeps every commit from your branch in main's history.</div>
-        </div>
-        <div class="vs-separator anim anim-d3">vs</div>
-        <div class="vs-side anim anim-d4">
-          <div class="vs-term">Squash &amp; <em>merge</em></div>
-          <div class="vs-def">Collapses all your commits into one, then merges.</div>
-          <div class="vs-highlight">usually preferred</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="slide-footer">
-      <span>Glossary</span>
-      <span class="italic-accent">merge strategies</span>
-    </div>
-  </section>
-
-  <!-- ===== Slide 11: Reviews ===== -->
-  <section class="slide slide--secondary slide-learn" data-theme="dark" data-bullets="4">
-    <div class="header-chrome">
-      <span class="tagline">Review & Merge</span>
-      <span class="logo">TDP</span>
-    </div>
-
-    <div class="shape shape-sphere shape-enter-left" style="bottom:-15%; left:-8%; width:280px; height:280px; opacity:0.5; z-index:1;"></div>
-
-    <div class="slide-content">
-      <div>
-        <div class="heading-lg anim anim-d1">Reviews:</div>
-        <div class="heading-lg anim anim-d2">you <span class="italic-accent">don't</span> merge</div>
-      </div>
-      <ul class="bullet-list">
-        <li data-bullet="1">Engineers approve and merge — not you, ever</li>
-        <li data-bullet="2">
-          Use preview URLs to collect live customer feedback
-          <div class="info-card">
-            <div class="info-icon"><img src="assets/Vercel_favicon.svg" alt="Vercel"></div>
-            <div class="info-text"><strong>Vercel</strong> is one of the most well-known — the URL appears as a bot comment on your PR.</div>
-          </div>
-        </li>
-        <li data-bullet="3">Treat PR comments like a design crit — receptive, not defensive</li>
-        <li data-bullet="4">Resolve threads as you address them, not all at the end</li>
-      </ul>
-      <div class="bullet-hint">→ press arrow / click to reveal</div>
-    </div>
-
-    <div class="slide-footer">
-      <span>Review</span>
-      <span class="italic-accent">the etiquette</span>
-    </div>
-  </section>
-
-  <!-- ===== Slide 12: Gotchas ===== -->
+  <!-- ===== Slide 11: Gotchas ===== -->
   <section class="slide slide--light slide-learn slide-pr-anatomy" data-theme="light" data-bullets="4">
     <div class="header-chrome">
       <span class="tagline">Gotchas</span>
       <span class="logo">TDP</span>
     </div>
 
-    <div class="shape shape-star shape-enter-right" style="top:-8%; right:-4%; width:180px; height:180px; opacity:0.35; z-index:1;"></div>
-    <div class="shape shape-pill shape-enter-left" style="bottom:12%; left:-4%; width:160px; height:70px; opacity:0.3; z-index:1;"></div>
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--float-1 shape-enter-right" alt="" style="top:-10%; right:-6%; width:20vw; opacity:1; z-index:1;">
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--float-2 shape-enter-left" alt="" style="bottom:6%; left:-6%; width:14vw; opacity:1; z-index:1;">
 
     <div class="slide-content pr-anatomy-content">
 
@@ -1855,26 +1838,42 @@
     </div>
   </section>
 
-  <!-- ===== Slide 13: Closing ===== -->
-  <section class="slide slide--secondary slide-closing" data-theme="dark">
-    <div class="shape shape-pill shape-enter-left" style="top:-16%; left:-8%; width:300px; opacity:0.4;"></div>
-    <div class="shape shape-star shape-enter-right" style="top:-12%; right:-7%; width:260px; height:260px; opacity:0.5; z-index:3;"></div>
-    <div class="shape shape-sphere shape-enter-bottom" style="bottom:-14%; left:-6%; width:300px; height:300px; opacity:0.4;"></div>
-    <div class="glass-panel"></div>
+  <!-- ===== Slide 12: Closing ===== -->
+  <section class="slide slide--light slide-closing" data-theme="light" style="background:#FAF7F4; color:#162825;">
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--float-1 shape-enter-left" alt="" style="top:-10%; left:-6%; width:20vw; opacity:1; z-index:1;">
+    <img src="assets/figma-cushion.png" class="shape shape-img shape--float-2 shape-enter-right" alt="" style="top:-6%; right:-6%; width:18vw; opacity:1; z-index:1;">
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--float-3 shape-enter-right" alt="" style="top:18%; right:6%; width:10vw; opacity:1; z-index:1;">
+    <img src="assets/figma-flower.png" class="shape shape-img shape--float-1 shape-enter-bottom" alt="" style="bottom:-10%; left:-4%; width:22vw; opacity:1; z-index:1;">
+    <img src="assets/figma-sphere.png" class="shape shape-img shape--float-3 shape-enter-bottom" alt="" style="bottom:-12%; right:-6%; width:20vw; opacity:1; z-index:1;">
+    <img src="assets/shape-asterisk.png" class="shape shape-img shape--float-2 shape-enter-left" alt="" style="bottom:14%; left:8%; width:9vw; opacity:1; z-index:1;">
 
     <div class="header-chrome">
-      <span class="tagline">TDP Workshop · 2026</span>
-      <span class="logo">TDP</span>
+      <span class="tagline" style="color:#162825;">2026</span>
+      <span class="logo" style="color:#162825;">TDP</span>
     </div>
 
-    <div class="slide-content">
+    <div class="slide-content" style="color:#162825;">
       <div class="title-main anim anim-d1">Now ship</div>
       <div class="title-main anim anim-d2">your <span class="italic-accent">first PR</span></div>
-      <div class="closing-link anim anim-d3">github.com/thedesignproject/agent-skills</div>
+      <div class="closing-links anim anim-d3">
+        <a href="https://github.com/thedesignproject/agent-skills" target="_blank" rel="noopener" class="closing-link-item">
+          <img src="assets/25231.png" alt="" class="closing-link-icon">
+          <span>github.com/thedesignproject/agent-skills</span>
+        </a>
+        <a href="https://designproject.io/" target="_blank" rel="noopener" class="closing-link-item">
+          <svg class="closing-link-icon closing-link-icon--svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18"/>
+            <path d="M12 3a14 14 0 0 1 0 18"/>
+            <path d="M12 3a14 14 0 0 0 0 18"/>
+          </svg>
+          <span>designproject.io</span>
+        </a>
+      </div>
     </div>
 
     <div class="slide-footer" style="z-index:4;">
-      <span class="anim anim-d5">TDP Internal · Onboarding</span>
+      <span class="anim anim-d5"></span>
       <span class="anim anim-d5 italic-accent">end</span>
     </div>
   </section>
@@ -1882,7 +1881,7 @@
 </div>
 
 <div class="progress-bar" id="progressBar"></div>
-<div class="slide-counter" id="slideCounter">1 / 13</div>
+<div class="slide-counter" id="slideCounter">1 / 12</div>
 <div class="nav-hint" id="navHint">use arrow keys, click, or swipe to navigate</div>
 
 <script>

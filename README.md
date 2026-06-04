@@ -8,8 +8,6 @@ Practical guides, skills, and references for getting the most out of AI-powered 
 
 ## Install
 
-Install the skills.
-
 ```bash
 # Install all skills — pick from an interactive list of every skill in the repo
 npx skills add thedesignproject/agent-skills

@@ -6,7 +6,7 @@ A collection of knowledge, tips, and resources for the builder community on AI, 
 
 Practical guides, skills, and references for getting the most out of AI-powered development tools.
 
-## Install
+## Install skills
 
 ```bash
 # Install all skills — pick from an interactive list of every skill in the repo

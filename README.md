@@ -8,17 +8,17 @@ Practical guides, skills, and references for getting the most out of AI-powered 
 
 ## Install
 
-Skills install via the [vercel-labs/skills](https://github.com/vercel-labs/skills) CLI — works with Claude Code, Codex, Cursor, and 60+ other agents.
+Install the skills.
 
 ```bash
+# Install all skills — pick from an interactive list of every skill in the repo
+npx skills add thedesignproject/agent-skills
+
 # Install one skill
 npx skills add thedesignproject/agent-skills -s <skill-name>
 
 # Install several at once
 npx skills add thedesignproject/agent-skills -s figma-use -s frontend-design
-
-# Pick from an interactive list of every skill in the repo
-npx skills add thedesignproject/agent-skills
 ```
 
 Add `-g` to install globally instead of into the current project. See `npx skills add --help` for the full flag list.

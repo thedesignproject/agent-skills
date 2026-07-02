@@ -47,6 +47,13 @@ For each question:
 - Select 2-3 strong anonymized quotes that capture key themes
 - Use quotes only from peer feedback, never from the employee's self-assessment
 
+Peer source anonymity is mandatory:
+- Do **not** name peer reviewers in the Section A table, notable quotes, parentheticals, or surrounding prose, even if their names appear in filenames or source documents.
+- Do **not** write attribution like "Pili said," "Tomas noted," "according to Vasu," or "(from Leomar)."
+- Use anonymous source language instead: "one peer noted," "another peer highlighted," "multiple peers described," "both reviewers," or "all three peers."
+- Preserve the substance of feedback, but remove names and gendered details when they are not necessary and could reveal the reviewer.
+- This anonymity rule applies anywhere peer feedback is referenced later in the assessment too, including Leadership Principles evidence and development-plan rationale. Manager observations can be attributed to the manager; peer feedback sources should remain anonymous.
+
 Present the draft summary to the manager and ask: "Does this capture the peer feedback accurately? Anything you'd adjust or add?"
 
 ### Step 4: Section B — Performance Rating (1-10)
@@ -149,9 +156,10 @@ Use the current date to determine the quarter. The file should follow the struct
 ## Evidence handling
 
 - Peer feedback can be quoted directly when it is anonymized and representative.
+- Never attribute peer feedback to named reviewers. Do not include peer names in summary rows, quote introductions, parentheticals, Leadership Principles evidence, tier justification, or development-plan rationale. Use anonymous labels like "one peer," "another peer," or "multiple peers" instead.
 - Manager observations can be stated directly and attributed to the manager's perspective.
 - Self-assessment content should inform the review, but it should not be quoted back to the employee. Use it to identify self-awareness, alignment, blind spots, achievements the manager should verify, or gaps between the employee's view and other evidence.
-- Before saving the final manager assessment, scan the draft for direct quotes or distinctive copied language from the employee's self-assessment and rewrite those parts as manager synthesis.
+- Before saving the final manager assessment, scan the draft for direct quotes or distinctive copied language from the employee's self-assessment and rewrite those parts as manager synthesis. Also scan for peer reviewer names or named peer attributions and anonymize them before saving.
 
 ## Philosophy: Rigorous and fair
 

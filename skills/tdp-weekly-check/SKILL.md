@@ -8,7 +8,7 @@ allowed-tools: Bash(slackdump *), Bash(date *), Bash(rm *), Bash(mkdir *), Bash(
 
 Generates a weekly customer activity report from two sources:
 
-1. **Slack** — a markdown table of TDP team message activity across all active `#tdp-*` customer Slack channels over the last 7 days.
+1. **Slack** — a markdown table of TDP team message activity across the active `#tdp-*` customer Slack channels over the last 7 days (archived and internal/non-customer channels are excluded — see Step 2).
 2. **Fireflies** — the latest meeting updates (summaries and action items) for each customer over the same window.
 
 ---
@@ -30,6 +30,8 @@ Run the following and capture the channel IDs (first column):
 slackdump list channels 2>&1 | grep "tdp-" | grep -v "(archived)" | grep -v "^C049\|scalestack-tdp\|caba-accounting"
 ```
 
+This intentionally excludes archived channels and a few non-customer `tdp-` channels (`scalestack-tdp`, `caba-accounting`, and the `C049…` internal channel). Adjust these exclusions if the set of internal channels changes.
+
 Extract only the channel IDs (first whitespace-delimited token on each line) for use in Step 4.
 
 Keep the customer name from each channel (the part after `tdp-`) — you'll reuse it in Step 7 to match Fireflies meetings to each customer.
@@ -38,11 +40,14 @@ Keep the customer name from each channel (the part after `tdp-`) — you'll reus
 
 ## Step 3 — Compute the 7-day lookback date
 
+Slack (`slackdump`) wants a full timestamp; Fireflies wants a date-only ISO string. Compute both:
+
 ```bash
-date -u -d "7 days ago" +%Y-%m-%dT%H:%M:%S
+date -u -d "7 days ago" +%Y-%m-%dT%H:%M:%S   # <7-days-ago-ts>  -> Step 4 (slackdump)
+date -u -d "7 days ago" +%Y-%m-%d            # <7-days-ago>     -> Step 7 (Fireflies fromDate)
 ```
 
-Use this value as `<7-days-ago>` in Step 4 and as the Fireflies `fromDate` in Step 7.
+Use `<7-days-ago-ts>` in Step 4 and the date-only `<7-days-ago>` as the Fireflies `fromDate` in Step 7.
 
 ---
 
@@ -50,7 +55,7 @@ Use this value as `<7-days-ago>` in Step 4 and as the Fireflies `fromDate` in St
 
 ```bash
 rm -rf /tmp/tdp-weekly-dump && mkdir -p /tmp/tdp-weekly-dump
-slackdump dump -files=false -time-from <7-days-ago> -o /tmp/tdp-weekly-dump/channels.zip <channel IDs...>
+slackdump dump -files=false -time-from <7-days-ago-ts> -o /tmp/tdp-weekly-dump/channels.zip <channel IDs...>
 ```
 
 Pass all channel IDs from Step 2 as space-separated arguments.
@@ -62,7 +67,7 @@ Pass all channel IDs from Step 2 as space-separated arguments.
 Run the following Python script to count messages per TDP team member per channel:
 
 ```python
-import zipfile, json, collections, os, re
+import zipfile, json, collections, os
 
 ROSTER = {
     "U0AGPF4EZ4L": "agos",
@@ -134,10 +139,10 @@ Print the resulting markdown table to the user. Channels with no TDP activity sh
 
 Aside from Slack, also pull the latest meeting updates from Fireflies for each customer. Slack shows message volume; Fireflies shows what was actually discussed on customer calls.
 
-For the same 7-day window (use `<7-days-ago>` from Step 3 as `fromDate`):
+For the same 7-day window (use the date-only `<7-days-ago>` from Step 3 as `fromDate`):
 
-1. Fetch recent meetings with `fireflies_get_transcripts` (pass `fromDate` = `<7-days-ago>`). For a specific customer you can also use `fireflies_search` with the customer name.
-2. For each customer from Step 2, match meetings by customer name in the meeting title or participant domain.
+1. Fetch recent meetings with `fireflies_get_transcripts`, passing `fromDate` = `<7-days-ago>` (ISO date, e.g. `2026-07-06`). To narrow to one customer, add `keyword` = the customer name with `scope: "title"`, or filter by the customer's email domain via `participants`.
+2. For each customer from Step 2, match the returned meetings by customer name in the meeting title (or by participant email domain).
 3. For each matched meeting, pull the summary with `fireflies_get_summary` (or `fireflies_get_transcript`) to get the overview and action items.
 
 Present a short per-customer block under the Slack table:
@@ -152,14 +157,14 @@ If a customer has no Fireflies meetings in the window, note `No meetings this we
 
 ---
 
-## Retention — do not delete important events
+## Retention — keep important events even when they're old
 
-The Slack dump under `/tmp/tdp-weekly-dump` is scratch data and is safe to clear at the start of each run (Step 4 already does this).
+The Slack dump under `/tmp/tdp-weekly-dump` is scratch data and is cleared at the start of each run (Step 4). This report is regenerated fresh each week and does not delete anything from Slack or Fireflies.
 
-**Fireflies meeting updates are different — never delete an important event, even if it is older than 30 days.** When deciding what to drop from the report or from any local cache of Fireflies updates:
+The rule below applies when you decide **what to include vs. drop from the Fireflies section** (Step 7), and to any weekly archive of these reports you keep:
 
-- Apply the 30-day age cutoff **only** to routine, low-signal updates (e.g. status syncs with no decisions or action items).
-- **Keep any update flagged as important regardless of age.** An update is important if it contains any of: a signed/renewed/churned contract or pricing change, an escalation or at-risk signal, a scope or milestone decision, a new commitment or deadline, or open action items that are still unresolved.
-- When in doubt, keep it. Retention errs toward preserving customer history, not pruning it.
+- The default window is 7 days. If you ever widen it, apply an age cutoff (e.g. 30 days) **only** to routine, low-signal meetings — status syncs with no decisions or action items.
+- **Always include an important update, regardless of age — even if it's older than 30 days.** An update is important if it involves any of: a signed / renewed / churned contract or pricing change, an escalation or at-risk signal, a scope or milestone decision, a new commitment or deadline, or open action items that are still unresolved.
+- When in doubt, keep it. Err toward preserving customer history, not pruning it.
 
-If you maintain a running archive of these updates across weeks, prune only routine items past 30 days and leave important events in place indefinitely.
+If you keep a running archive of these weekly reports, never delete an entry that surfaced an important event, no matter how old it is.

@@ -72,7 +72,6 @@ ROSTER = {
     "U085F9X1B7Y": "arnie",
     "U038BL272D7": "delfi",
     "UFLNVR5L7":   "dianne",
-    "U0A5XU1JJ6N": "florencia",
     "U03LWUCJ83H": "isa",
     "U08JW699NKY": "juli",
     "U06N15KDYS3": "leomar",

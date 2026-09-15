@@ -54,6 +54,7 @@ Each skill activates in one of two ways, shown in the **How to use** column:
 
 | Guide | Description |
 |-------|-------------|
+| [Grok Bot for Design](guides/grokbot-design/) | Seven-step setup and product design workflow with reusable prompts, an offline HTML guide, and review checkpoints. |
 | [pr-and-branch-naming](guides/github-for-designers/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
 
 ## Contributing

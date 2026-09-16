@@ -40,14 +40,14 @@ We are improving [screen] in [product]. Our users are [people], and they need to
 
 The example workflow uses Mobbin for references, Paper for exploration, and Storybook for existing components. Use the tools that fit your project and connect the ones this task needs. An MCP connection is a way for an AI assistant to work with another tool.
 
-For available connectors, open Settings → Plugins, choose Add, and complete sign-in. Use @ in chat to attach a connector. For a custom MCP connection, ask the Bot to help check the tool’s official setup instructions. Support and access can vary.
+Start in chat: ask Grok Bot to connect the tool you need, then follow the connection and browser sign-in steps it presents. Ask it to open a specific file or board to confirm access. If the connection is not offered in chat, check Settings → Plugins or the tool’s official MCP instructions. Availability depends on the tool and your access.
 
 [Official app and connector instructions](https://docs.x.ai/grok-bot/computer-and-apps)
 
 ### Try this prompt
 
 ```text
-For this task, I want to use [reference tool], [design tool], and [component library or repository]. Check which connections are available and tell me what I need to do to connect each one. Use the official setup instructions for any MCP. Once connected, confirm you can read [specific file, board, or component]. If you cannot access it, explain what I should provide instead.
+For this task, I want to use [reference tool], [design tool], and [component library or repository]. Help me connect these tools from this conversation and walk me through any sign-in steps I need to complete. Use the official setup instructions for any MCP. Once connected, confirm you can read [specific file, board, or component]. If you cannot access it, explain what I should provide instead.
 ```
 
 - [ ] The Bot has opened the exact resources I shared.
@@ -70,12 +70,12 @@ Find three relevant examples of [interaction or UI pattern]. Include the actual 
 
 Move from references to alternatives. For a feedback card, you could compare layouts, status pills, and progress indicators. Give the Bot your component library so the exploration stays connected to your product.
 
-Ask for meaningfully different options around one decision. For example: a status pill, a progress indicator, or an action placed directly on the card.
+Ask for meaningfully different options around one decision. For example: a status pill, a progress indicator, or an action placed directly on the card. Invite the Bot to suggest an alternative based on the product context, rather than only following your first idea.
 
 ### Try this prompt
 
 ```text
-Using our references and existing components, explore three layouts for [screen or component] in [design file]. Prioritize [key information] and make [primary action] easy to find. Vary [the design decision we want to explore] across the options. Show screenshots of the alternatives in chat, link to the editable designs, and explain the tradeoffs. Identify any new components we would need.
+Using our references and existing components, explore three layouts for [screen or component] in [design file]. Prioritize [key information] and make [primary action] easy to find. Vary [the design decision we want to explore] across the options. Show screenshots of the alternatives in chat, link to the editable designs, and explain the tradeoffs. Based on the product context and repository, suggest another direction worth exploring and explain why. Identify any new components we would need.
 ```
 
 - [ ] I have compared the alternatives and picked a direction.
@@ -84,15 +84,15 @@ Using our references and existing components, explore three layouts for [screen 
 
 React to what you can see. Point to the part that is unclear, say why it matters, and describe the behavior you want. Keep the loop small enough to tell whether each change helped.
 
-In this example, the design needs to distinguish feedback that needs review, feedback ready for an agent, and completed work. Look at all three states together.
+In this example, the design needs to distinguish feedback that needs review, feedback ready for an agent, and completed work. Compare those states, then place the chosen card in the full dashboard. Check its spacing, hierarchy, and actions alongside the surrounding interface before implementing it.
 
 ### Try this prompt
 
 ```text
-Keep [what works] from option [choice]. Change [specific element] because [user problem]. Make [key information] easier to scan and [next action] easier to find. Show the relevant states together: [list the states for your screen or component]. Return updated screenshots in chat and the editable link so I can compare them.
+Keep [what works] from option [choice]. Change [specific element] because [user problem]. Make [key information] easier to scan and [next action] easier to find. Show the relevant states together: [list the states for your screen or component]. Place the chosen direction in the full [screen or dashboard], using the surrounding layout and components. Check spacing, hierarchy, and how the actions work in context. Return updated screenshots in chat and the editable link so I can compare them.
 ```
 
-- [ ] The chosen layout makes the status and next action clear.
+- [ ] The chosen layout works in the full screen and makes the next action clear.
 
 ## 7. Bring the chosen direction into code
 
@@ -116,6 +116,16 @@ Use a screenshot and a short product brief for steps 1–6. Finish with an edita
 
 ```text
 Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
+```
+
+## Optional: Try a daily planning Bot
+
+The same conversational approach can help with everyday work. Create a separate Bot for calendar planning, connect Google Calendar through the sign-in flow, and ask for a daily agenda with gaps for focused work.
+
+Specify your time zone and review an example before enabling the routine. This is an optional way to explore working across tools from one interface.
+
+```text
+Help me connect Google Calendar and walk me through sign-in. Set up a daily briefing for 8 a.m. in [time zone]. List the day’s events and gaps of at least [duration] for focused work. Show me a sample briefing and confirm the schedule before enabling it. Do not create, move, or cancel calendar events.
 ```
 
 ## When you get stuck

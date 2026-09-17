@@ -2,57 +2,57 @@ Grok Bot for Design | The Design Project
 
 Reusable templates. Replace bracketed details with your project context.
 
-1. Set up your design partner
+1. No codebase yet?
+
+Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
+
+---
+
+2. Set up your design partner
 
 Your name is Design Partner. Your role is to help me explore improvements to an existing product, explain design choices in plain language, and show me work I can react to. Start by asking which screen we are improving and what is difficult for its users. We will choose a direction together before implementation.
 
 ---
 
-2. Connect your GitHub repo, or start with screenshots
+3. Connect your GitHub repo, or start with screenshots
 
 I’m going to be working in this GitHub repository: [repository URL]. Help me connect it and walk me through any sign-in or access steps. Confirm you can read the project and summarize its structure and existing components before we start designing.
 
 ---
 
-3. Give it a real product problem
+4. Give it a real product problem
 
 We are improving [screen] in [product]. Our users are [people], and they need to [task]. Today, [specific problem] makes that difficult. A successful change would help them [observable outcome]. Here are the current screen and product notes: [attach files or add links]. Read the available context and summarize the problem before proposing changes. Tell me what information is missing.
 
 ---
 
-4. Connect the tools for this task
+5. Connect the tools for this task
 
 I want to use [tool name] for [task]. Help me connect it and walk me through the setup and sign-in steps. Then open [specific file, board, or component] so we can work with it.
 
 ---
 
-5. Find references you can actually see
+6. Find references you can actually see
 
 Find three relevant examples of [interaction or UI pattern]. Include the actual screenshots and source links, then explain what each example could help us solve. Put them together in [Paper file or reference board]. Focus on [the information users need to see] and [the action they need to take].
 
 ---
 
-6. Explore a few directions in Paper
+7. Explore a few directions in Paper
 
 Using our references and existing components, explore three layouts for [screen or component] in [design file]. Prioritize [key information] and make [primary action] easy to find. Vary [the design decision we want to explore] across the options. Show screenshots of the alternatives in chat, link to the editable designs, and explain the tradeoffs. Based on the product context and any connected repository, suggest another direction worth exploring and explain why. Identify any new components we would need.
 
 ---
 
-7. Give feedback that changes the design
+8. Give feedback that changes the design
 
 Keep [what works] from option [choice]. Change [specific element] because [user problem]. Make [key information] easier to scan and [next action] easier to find. Show the relevant states together: [list the states for your screen or component]. Place the chosen direction in the full [screen or dashboard], using the surrounding layout and components. Check spacing, hierarchy, and how the actions work in context. Return updated screenshots in chat and the editable link so I can compare them.
 
 ---
 
-8. Bring the chosen direction into code
+9. Bring the chosen direction into code
 
 Implement the chosen design at [exact design link] in [repository and screen]. First confirm you can access the repository and our Storybook components. Reuse existing tokens and components, and preserve the current actions and data behavior. Work in a separate branch. Show me a working preview, check the relevant states and small-screen layout, run the project checks, and summarize the changed files and anything unresolved. Leave the work ready for team review.
-
----
-
-9. Implementation brief
-
-Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
 
 ---
 

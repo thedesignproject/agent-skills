@@ -6,6 +6,14 @@ The guide uses a dashboard feedback card as a running example. Apply the same pr
 
 [Open the interactive guide](https://designproject.io/grokbot-design-guide/)
 
+## No codebase yet?
+
+You can start with screenshots or a product URL and a short product brief. Connect your GitHub repo in step 2 if you want to work with existing code. Without repo access, follow the design steps and use this prompt when you are ready to hand the design to your team.
+
+```text
+Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
+```
+
 ## 1. Set up your design partner
 
 Install Grok Bot from the official download page and sign in with an eligible paid plan. Check the current account requirements in the official setup instructions before you begin.
@@ -121,14 +129,6 @@ Implement the chosen design at [exact design link] in [repository and screen]. F
 ```
 
 - [ ] I have reviewed the working preview or shared an implementation brief.
-
-## No codebase yet?
-
-If you chose the screenshot path in step 2, use this prompt to finish with an editable design and a clear brief for your team.
-
-```text
-Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
-```
 
 ## Optional: Try a daily planning Bot
 

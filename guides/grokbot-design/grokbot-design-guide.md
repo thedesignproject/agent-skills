@@ -1,28 +1,42 @@
 # Grok Bot for Design
 
-A practical starting point for designing with Grok Bot. Follow seven steps to define a product problem, connect your tools, explore ideas, and prepare a design for implementation.
+A practical starting point for designing with Grok Bot. Follow eight steps to define a product problem, connect your tools, explore ideas, and prepare a design for implementation.
 
-The guide uses a dashboard feedback card as a running example. Apply the same process to your own screen or component, and replace bracketed prompt details with your project context. Start with a screenshot and a clear user need; add your component library and codebase when you are ready.
+The guide uses a dashboard feedback card as a running example. Apply the same process to your own screen or component, and replace bracketed prompt details with your project context. Choose your starting point: connect your GitHub repo to work with existing code, or start smaller with screenshots or a product URL. Both paths support design exploration; repository access is needed to change your code or open a pull request.
 
 [Open the interactive guide](https://designproject.io/grokbot-design-guide/)
 
 ## 1. Set up your design partner
 
-Install Grok Bot from the official download page and follow its sign-in flow. Create a Bot with one clear job, such as “Design exploration.” Check current account eligibility on the setup page before you begin.
+Install Grok Bot from the official download page and sign in with an eligible paid plan. Check the current account requirements in the official setup instructions before you begin.
 
-Give it a name and a focused role. You can start with a screenshot of one screen you want to improve.
+Create your first Bot (agent). Give it a name, such as “Design Partner,” and a focused role: helping you explore and improve product designs. Use the prompt below as its role description.
 
 [Official setup instructions](https://docs.x.ai/grok-bot/get-started)
 
 ### Try this prompt
 
 ```text
-You are my product design partner. Help me explore improvements to an existing product, explain your design choices in plain language, and show me work I can react to. Start by asking which screen we are improving and what is difficult for its users. We will choose a direction together before implementation.
+Your name is Design Partner. Your role is to help me explore improvements to an existing product, explain design choices in plain language, and show me work I can react to. Start by asking which screen we are improving and what is difficult for its users. We will choose a direction together before implementation.
 ```
 
 - [ ] My Bot is created and understands its role.
 
-## 2. Give it a real product problem
+## 2. Connect your GitHub repo, or start with screenshots
+
+Connect your GitHub repository if you want Grok Bot to read the existing code, reuse components, and prepare code changes or pull requests. Paste the repository link into chat and ask it to help you connect. Complete any sign-in and access steps it provides.
+
+No repo access? Start with screenshots or a product URL and a short product brief. You can explore and refine the design, then share an editable design and implementation brief with your team. Changing code or opening a pull request in your repo requires repository access.
+
+### Try this prompt
+
+```text
+I’m going to be working in this GitHub repository: [repository URL]. Help me connect it and walk me through any sign-in or access steps. Confirm you can read the project and summarize its structure and existing components before we start designing.
+```
+
+- [ ] My repo is connected, or I have chosen to work from screenshots.
+
+## 3. Give it a real product problem
 
 Pick one small part of your product and define what needs to improve. For example, a feedback card might need a clearer status and next action. Tell the Bot who uses the screen, what they need to do, and what already works.
 
@@ -36,37 +50,37 @@ We are improving [screen] in [product]. Our users are [people], and they need to
 
 - [ ] The Bot can explain the user problem accurately.
 
-## 3. Connect the tools for this task
+## 4. Connect the tools for this task
 
 The example workflow uses Mobbin for references, Paper for exploration, and Storybook for existing components. Use the tools that fit your project and connect the ones this task needs. An MCP connection is a way for an AI assistant to work with another tool.
 
-Start in chat: ask Grok Bot to connect the tool you need, then follow the connection and browser sign-in steps it presents. Ask it to open a specific file or board to confirm access. If the connection is not offered in chat, check Settings → Plugins or the tool’s official MCP instructions. Availability depends on the tool and your access.
+Say which tool you want to use in chat. Grok Bot will guide you through the setup and any sign-in steps. Once connected, ask it to open the file or board you want to work with.
 
 [Official app and connector instructions](https://docs.x.ai/grok-bot/computer-and-apps)
 
 ### Try this prompt
 
 ```text
-For this task, I want to use [reference tool], [design tool], and [component library or repository]. Help me connect these tools from this conversation and walk me through any sign-in steps I need to complete. Use the official setup instructions for any MCP. Once connected, confirm you can read [specific file, board, or component]. If you cannot access it, explain what I should provide instead.
+I want to use [tool name] for [task]. Help me connect it and walk me through the setup and sign-in steps. Then open [specific file, board, or component] so we can work with it.
 ```
 
 - [ ] The Bot has opened the exact resources I shared.
 
-## 4. Find references you can actually see
+## 5. Find references you can actually see
 
-Ask for examples that solve the same interaction problem. Request actual screenshots and source links so you can judge the patterns yourself. If a board only contains descriptions, ask the Bot to add the images before choosing a direction.
+Ask for examples that solve the same interaction problem. Request actual screenshots and source links so you can judge the patterns yourself.
 
 Use Mobbin if you have access, or supply screenshots yourself. Compare how each example communicates status, hierarchy, and the next action.
 
 ### Try this prompt
 
 ```text
-Find three relevant examples of [interaction or UI pattern]. Include the actual screenshots and source links, then explain what each example could help us solve. Put them together in [Paper file or reference board]. Focus on [the information users need to see] and [the action they need to take]. If an image is unavailable, say so instead of describing it as if it is on the board.
+Find three relevant examples of [interaction or UI pattern]. Include the actual screenshots and source links, then explain what each example could help us solve. Put them together in [Paper file or reference board]. Focus on [the information users need to see] and [the action they need to take].
 ```
 
 - [ ] I can see the references and explain what is useful about them.
 
-## 5. Explore a few directions in Paper
+## 6. Explore a few directions in Paper
 
 Move from references to alternatives. For a feedback card, you could compare layouts, status pills, and progress indicators. Give the Bot your component library so the exploration stays connected to your product.
 
@@ -75,12 +89,12 @@ Ask for meaningfully different options around one decision. For example: a statu
 ### Try this prompt
 
 ```text
-Using our references and existing components, explore three layouts for [screen or component] in [design file]. Prioritize [key information] and make [primary action] easy to find. Vary [the design decision we want to explore] across the options. Show screenshots of the alternatives in chat, link to the editable designs, and explain the tradeoffs. Based on the product context and repository, suggest another direction worth exploring and explain why. Identify any new components we would need.
+Using our references and existing components, explore three layouts for [screen or component] in [design file]. Prioritize [key information] and make [primary action] easy to find. Vary [the design decision we want to explore] across the options. Show screenshots of the alternatives in chat, link to the editable designs, and explain the tradeoffs. Based on the product context and any connected repository, suggest another direction worth exploring and explain why. Identify any new components we would need.
 ```
 
 - [ ] I have compared the alternatives and picked a direction.
 
-## 6. Give feedback that changes the design
+## 7. Give feedback that changes the design
 
 React to what you can see. Point to the part that is unclear, say why it matters, and describe the behavior you want. Keep the loop small enough to tell whether each change helped.
 
@@ -94,13 +108,11 @@ Keep [what works] from option [choice]. Change [specific element] because [user 
 
 - [ ] The chosen layout works in the full screen and makes the next action clear.
 
-## 7. Bring the chosen direction into code
+## 8. Bring the chosen direction into code
 
 Share the exact design you chose and the repository the Bot can work in. Ask it to reuse existing components, tokens, and behaviors. If you do not have repository access yet, finish with the editable design and a short implementation brief for your team.
 
-The Bot’s cloud computer is separate from your laptop. A local Storybook URL may need a different access route. Ask it to confirm access before it starts, then review the working result in a browser.
-
-[How cloud and local access work](https://docs.x.ai/grok-bot/computer-and-apps)
+Review the working result in a browser with your team. Check that the chosen design fits the full screen and that its actions work as expected.
 
 ### Try this prompt
 
@@ -112,7 +124,7 @@ Implement the chosen design at [exact design link] in [repository and screen]. F
 
 ## No codebase yet?
 
-Use a screenshot and a short product brief for steps 1–6. Finish with an editable design and hand your team a clear description of what should change.
+If you chose the screenshot path in step 2, use this prompt to finish with an editable design and a clear brief for your team.
 
 ```text
 Prepare an implementation brief for the design we chose. Include the user problem, the design link, the intended behavior for each state, the components to reuse, and the questions our engineering team needs to resolve. Mark assumptions clearly.
@@ -130,10 +142,6 @@ Help me connect Google Calendar and walk me through sign-in. Set up a daily brie
 
 ## When you get stuck
 
-### The reference board only contains descriptions.
-
-Ask for the actual screenshots and source links. If the Bot cannot retrieve them, upload a few examples yourself and ask it to continue from those.
-
 ### The design looks good but ignores our components.
 
 Give it the exact Storybook or repository location. Ask which existing components it reused and which it created. Revisit the design with that inventory in view.
@@ -141,10 +149,6 @@ Give it the exact Storybook or repository location. Ask which existing component
 ### The tool connection is unavailable.
 
 Ask the Bot what it can access, then provide screenshots, an export, or an accessible preview. For a sign-in step, follow the app’s authentication flow. Check the official connector instructions below.
-
-### The preview works, but the real behavior is unclear.
-
-Ask whether the preview uses real data or sample data. Walk through each status and action, and ask the Bot to list any simulated behavior before handing the work to your team.
 
 ## Keep exploring
 
@@ -154,7 +158,7 @@ Keep the prompts, try them on one screen, and see where you need to give the Bot
 
 ## Official setup resources
 
-Setup checked September 15, 2026. App labels, access, and connector availability can change. The prompts are reusable TDP templates for product design tasks.
+Setup checked September 17, 2026. App labels, access, and connector availability can change. The prompts are reusable TDP templates for product design tasks.
 
 - [Grok Bot downloads and access](https://x.ai/bot)
 - [Create your first Bot](https://docs.x.ai/grok-bot/get-started)

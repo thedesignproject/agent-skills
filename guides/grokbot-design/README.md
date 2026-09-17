@@ -7,9 +7,9 @@ A standalone guide for product teams using Grok Bot to explore and implement des
 - [Read the guide on GitHub](grokbot-design-guide.md).
 - [Open the interactive website guide](https://designproject.io/grokbot-design-guide/) after the companion website PR deploys.
 - Download [the standalone HTML](grokbot-design-guide.html) using GitHub’s **Download raw file** button, then open it in a browser. Fonts, styles, and scripts are embedded; no installation or server is needed.
-- [Get all nine prompts](grokbot-design-prompts.txt).
+- [Get all ten prompts](grokbot-design-prompts.txt).
 
-The interactive version includes copy buttons, a downloadable prompt file, seven progress checkpoints saved in the browser, and a print layout. **Save PDF** opens the browser’s print dialog.
+The interactive version includes copy buttons, a downloadable prompt file, eight progress checkpoints saved in the browser, and a print layout. **Save PDF** opens the browser’s print dialog.
 
 This is a human-readable guide. It does not install an agent skill through `npx skills add`.
 

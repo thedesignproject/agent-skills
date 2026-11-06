@@ -33,6 +33,7 @@ Each skill activates in one of two ways, shown in the **How to use** column:
 | [accessibility](skills/accessibility/) | Audits and improves web accessibility following WCAG 2.2 — a11y reviews, screen reader support, keyboard navigation. | Auto — ask to "audit accessibility", "a11y audit", "WCAG compliance", or "make accessible". |
 | [agentic-design-systems](skills/agentic-design-systems/) | Designs, scaffolds, extends, or audits a component library whose primary consumer is an AI agent. Generates machine-readable metadata for components, variants, tokens, and anti-patterns. | Auto — ask to build or make a design system AI-readable, define a component metadata schema, or scaffold a UI library for an LLM. |
 | [ai-component-metadata](skills/ai-component-metadata/) | Generates AI-ready metadata for design system components. Analyzes structure and produces structured metadata so an agent knows when and how to use each one. | Auto — ask to generate AI-ready metadata for your design-system components. |
+| [build-my-designer-brain](skills/build-my-designer-brain/) | Builds and evolves a personal designer brain with critique methods, AI working preferences, optional references and taste, and reusable lessons. | Auto — ask to build or update your personal designer brain. Includes a guided interview with write-ins and ranked priorities. |
 | [business-kickoff-workshop](skills/business-kickoff-workshop/) | Prepares a customized 45-min Business Model Canvas workshop agenda from customer context before a call, or fills the BMC from a post-call transcript. | Auto — mention a kickoff call, BMC workshop, or business model canvas. |
 | [caveman](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping technical accuracy. Levels: lite, full, ultra. | `/caveman`, or say "caveman mode" / "be brief" / "less tokens". |
 | [create-prd](skills/create-prd/) | Generate structured PRDs from feature request transcripts or descriptions. Researches your codebase for accurate technical scoping and optionally creates Linear projects and issues. | `/create-prd path/to/transcript.md` (or paste the request). Customize `company-context.md` first. |
@@ -54,6 +55,7 @@ Each skill activates in one of two ways, shown in the **How to use** column:
 
 | Guide | Description |
 |-------|-------------|
+| [build-my-designer-brain](guides/build-my-designer-brain.md) | Install the personal designer-brain skill, run the interview, and reuse the resulting knowledge in project work. |
 | [pr-and-branch-naming](guides/github-for-designers/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
 
 ## Contributing

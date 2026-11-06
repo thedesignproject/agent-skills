@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build My Designer Brain"
+  short_description: "Capture your critique methods and working preferences"
+  default_prompt: "Use $build-my-designer-brain to interview me and build my personal designer brain."

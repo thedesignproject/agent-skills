@@ -6,6 +6,18 @@ A collection of knowledge, tips, and resources for the builder community on AI, 
 
 Practical guides, skills, and references for getting the most out of AI-powered development tools.
 
+## Download Build My Designer Brain
+
+[**Download the skill ZIP**](https://github.com/thedesignproject/agent-skills/raw/refs/heads/main/downloads/build-my-designer-brain.zip) · [Setup instructions](guides/build-my-designer-brain.md)
+
+Build your personal critique methods, AI working preferences, optional references and taste, and reusable lessons through a guided interview. No terminal needed for Claude upload.
+
+1. Download the ZIP above. Keep it zipped for Claude.
+2. In Claude, open **Customize → Skills → + → Create skill → Upload a skill** and select the ZIP. Enable the skill; file creation must be enabled.
+3. Say: **“Use Build My Designer Brain to help me build my personal designer brain.”**
+
+For local coding agents, unzip the download and install the complete folder using the [tool-specific instructions](guides/build-my-designer-brain.md#install-the-shared-skill). ChatGPT installation differs by surface; the ZIP is not a published ChatGPT plugin.
+
 ## Quick start: NPX Installation (Recommended)
 
 ```bash

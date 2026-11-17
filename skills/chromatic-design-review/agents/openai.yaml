@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chromatic Design Review"
+  short_description: "Set up Storybook checks and review visual changes"
+  default_prompt: "Use $chromatic-design-review to inspect our Storybook and Chromatic setup and help us require design review before merging."

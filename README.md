@@ -18,6 +18,12 @@ Build your personal critique methods, AI working preferences, optional reference
 
 For local coding agents, unzip the download and install the complete folder using the [tool-specific instructions](guides/build-my-designer-brain.md#install-the-shared-skill). ChatGPT installation differs by surface; the ZIP is not a published ChatGPT plugin.
 
+## Download Chromatic Design Review
+
+[**Download the skill ZIP**](https://github.com/thedesignproject/agent-skills/raw/refs/heads/main/downloads/chromatic-design-review.zip) · [Checklist and setup prompt](skills/chromatic-design-review/assets/design-review-checklist.md) · [Getting started](guides/chromatic-design-review.md)
+
+Keep front-end changes aligned with your Storybook components. Audit or set up Chromatic checks, review visual differences, and verify required design approval before merging.
+
 ## Quick start: NPX Installation (Recommended)
 
 ```bash
@@ -48,6 +54,7 @@ Each skill activates in one of two ways, shown in the **How to use** column:
 | [build-my-designer-brain](skills/build-my-designer-brain/) | Builds and evolves a personal designer brain with critique methods, AI working preferences, optional references and taste, and reusable lessons. | Auto — ask to build or update your personal designer brain. Includes a guided interview with write-ins and ranked priorities. |
 | [business-kickoff-workshop](skills/business-kickoff-workshop/) | Prepares a customized 45-min Business Model Canvas workshop agenda from customer context before a call, or fills the BMC from a post-call transcript. | Auto — mention a kickoff call, BMC workshop, or business model canvas. |
 | [caveman](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping technical accuracy. Levels: lite, full, ultra. | `/caveman`, or say "caveman mode" / "be brief" / "less tokens". |
+| [chromatic-design-review](skills/chromatic-design-review/) | Audits or sets up Storybook + Chromatic checks and guides visual review against the team's component decisions. Includes a shareable checklist and starter prompt. | Auto — ask to set up Chromatic, require UI Review before merging, audit visual PR checks, or review a component change. |
 | [create-prd](skills/create-prd/) | Generate structured PRDs from feature request transcripts or descriptions. Researches your codebase for accurate technical scoping and optionally creates Linear projects and issues. | `/create-prd path/to/transcript.md` (or paste the request). Customize `company-context.md` first. |
 | [create-skill](skills/create-skill/) | Authors new Cursor Agent Skills. Use when writing a new SKILL.md or asking how the skill format works. | Auto — ask to create a new skill or about `SKILL.md` structure. |
 | [extract-design-system](skills/extract-design-system/) | Extracts design primitives (color, typography, spacing) from a public website and generates starter token files. | Auto — ask to extract design tokens or a design system from a website URL. |
@@ -68,6 +75,7 @@ Each skill activates in one of two ways, shown in the **How to use** column:
 | Guide | Description |
 |-------|-------------|
 | [build-my-designer-brain](guides/build-my-designer-brain.md) | Install the personal designer-brain skill, run the interview, and reuse the resulting knowledge in project work. |
+| [chromatic-design-review](guides/chromatic-design-review.md) | Keep Storybook-based UI consistent with a design review checklist, starter prompt, and installable Chromatic skill. |
 | [pr-and-branch-naming](guides/github-for-designers/pr-and-branch-naming.md) | A simple convention for naming pull requests and branches when working on a client codebase, with an optional TDP prefix to make designer-authored work easy to spot. |
 
 ## Contributing

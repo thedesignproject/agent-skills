@@ -1,0 +1,4 @@
+interface:
+  display_name: "Set up Chromatic"
+  short_description: "Set up component and screen visual testing"
+  default_prompt: "Use $setup-chromatic to connect my agent and set up Chromatic visual testing for this project."

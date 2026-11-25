@@ -1,5 +1,9 @@
 # Agent Skills
 
+<!-- yarkr:badges:start -->
+[![Indexed on Yarkr](https://api.yarkr.com/functions/v1/api/api/v1/badges/repos/thedesignproject/agent-skills/version.svg)](https://yarkr.com/arks/thedesignproject/agent-skills)
+<!-- yarkr:badges:end -->
+
 A collection of knowledge, tips, and resources for the builder community on AI, Claude Code, and other developer tools.
 
 ## What's inside
@@ -32,6 +36,40 @@ npx skills add thedesignproject/agent-skills -s figma-use -s frontend-design
 ```
 
 Add `-g` to install globally instead of into the current project. See `npx skills add --help` for the full flag list.
+
+<!-- yarkr:install:start -->
+## Install with Yarkr
+
+This repo is indexed on [Yarkr](https://yarkr.com/arks/thedesignproject/agent-skills) as the ark [thedesignproject/agent-skills](https://yarkr.com/arks/thedesignproject/agent-skills), so its skills install into Claude Code, Codex, Cursor and other agent harnesses with one command.
+
+### CLI
+
+Install the whole ark, which Yarkr keeps equal to this repo:
+
+```bash
+npx yarkr-cli sync thedesignproject/agent-skills
+```
+
+Or add individual skills:
+
+```bash
+npx yarkr-cli add skill:thedesignproject/agent-skills/accessibility
+npx yarkr-cli add skill:thedesignproject/agent-skills/agentic-design-systems
+npx yarkr-cli add skill:thedesignproject/agent-skills/ai-component-metadata
+```
+
+No Node.js? `curl -fsSL https://yarkr.com/install.sh | sh` (macOS, Linux) or `irm https://yarkr.com/install.ps1 | iex` (Windows PowerShell) installs `yarkr` as a standalone binary; then type `yarkr` in place of `npx yarkr-cli`.
+
+### MCP
+
+Connect your agent to the ark over MCP:
+
+```bash
+npx yarkr-cli mcp add thedesignproject/agent-skills
+```
+
+Or point any MCP client at `https://api.yarkr.com/functions/v1/api/mcp/o/thedesignproject/agent-skills`.
+<!-- yarkr:install:end -->
 
 ## Skills
 
